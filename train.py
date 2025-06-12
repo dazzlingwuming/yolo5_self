@@ -35,7 +35,7 @@ ROOT = FILE.parents[0]  # YOLOv5 root directory
 if str(ROOT) not in sys.path:
     sys.path.append(str(ROOT))  # add ROOT to PATH
 ROOT = Path(os.path.relpath(ROOT, Path.cwd()))  # relative
-
+import gc
 import val  # for end-of-epoch mAP
 from models.experimental import attempt_load
 from models.yolo import Model
@@ -260,6 +260,9 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
                 f'Starting training for {epochs} epochs...')
     for epoch in range(start_epoch, epochs):  # epoch ------------------------------------------------------------------
         callbacks.run('on_train_epoch_start')
+        #释放内存
+        gc.collect()
+        torch.cuda.empty_cache()
         model.train()
 
         # Update image weights (optional, single-GPU only)
